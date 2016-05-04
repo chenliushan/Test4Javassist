@@ -1,0 +1,33 @@
+group 'Test4Javassist'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+}
+// Redefine where Gradle should expect Java source files (*.java)
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    runtime files('libs/javassist.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+}
+def libPath = "libs/javassist.jar"
+
+jar {
+    manifest {
+        attributes(
+                //将依赖的classpath文件的绝对路径添加到jar的manifest中(file.absolutePath)
+                'Class-Path':  new File(libPath).absolutePath)
+    }
+}
