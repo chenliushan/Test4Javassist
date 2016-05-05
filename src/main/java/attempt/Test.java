@@ -96,10 +96,18 @@ public class Test {
     private static void modifyTargetClass(ClassPool pool, String TargetClass) {
         try {
             CtClass cc = pool.get(TargetClass);
+            pool.importPackage("org.apache.logging.log4j.LogManager");
+            pool.importPackage("org.apache.logging.log4j.Logger");
+            CtField field =  CtField.make(" private static Logger logger = LogManager.getLogger();",cc);
+//            CtField field =  CtField.make(" private int i=1;",cc);
+            cc.addField(field);
+
             CtMethod mainMethod = cc.getDeclaredMethod("main");
             mainMethod.insertBefore("System.out.println(\"Hello, I was inserted in the .class\");");
             mainMethod.insertBefore("System.out.println(\"testStringDeclare:\"+testString);");
-            mainMethod.insertAt(30, "System.out.println(\"string a:\"+a);");
+//            mainMethod.insertAt(30, "System.out.println(\"string a:\"+a);");
+            mainMethod.insertAt(30, "logger.error(\"a:\"+ a);");
+
             mainMethod.insertAt(31, "System.out.println(\"CtClass:\"+cc);");
             System.out.println("main() is found and the statement is inserted.");
             cc.writeFile(projectClassPath + outputPath.substring(0, outputPath.length() - 1));    // update the class file
@@ -107,7 +115,8 @@ public class Test {
             e.printStackTrace();
         } catch (CannotCompileException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -119,12 +128,12 @@ public class Test {
      * @param args
      */
     private static void runTarget(ClassPool pool, String targetClass,String[] args){
-        Loader cl = new Loader(pool);
-        try {
-            cl.run(targetClass, args);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+//        Loader cl = new Loader(pool);
+//        try {
+//            cl.run(targetClass, args);
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
     }
 
 }
